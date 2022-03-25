@@ -48,8 +48,8 @@ class Command(BaseCommand):
             if fabric_name is None:
                 break
             fabric, _ = SteelStructureFabric.objects.get_or_create(name=fabric_name)
-            self.handle_fabric(fabric)
-            self.start_fabric_margin[1] += 8
+            fabric_rows_count = self.handle_fabric(fabric)
+            self.start_fabric_margin[1] += fabric_rows_count + 1
 
     def handle_fabric(self, fabric):
         headers = self.get_headers()
@@ -61,6 +61,8 @@ class Command(BaseCommand):
             row_data_dict = dict(zip(headers, row_data))
             self.handle_delivery(row_data_dict, fabric)
             row_margin += 1
+
+        return len(headers)
 
     @transaction.atomic
     def handle_delivery(self, data_dict, fabric):
